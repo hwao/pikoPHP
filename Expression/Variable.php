@@ -13,11 +13,7 @@ class Expression_Variable extends Expression
 
     public function evalExpression(Memory $Memory)
     {
-        try {
-            $value = $Memory->find($this->name);
-
-        } catch (Exception $E) {
-            throw new Exception_Memory_VaribleNotFound('Varible "' . $this->name . '" not found!');
-        }
+        $value = $Memory->find($this->name);
+        return $value;
     }
 }
