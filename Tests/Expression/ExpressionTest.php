@@ -25,7 +25,7 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException Exception_Memory_VaribleNotFound
+	 * @expectedException Exception_Memory_VariableNotFound
 	 */
 	public function testExceptionVaribleNotFound()
 	{

@@ -20,6 +20,6 @@ class Memory
             return $this->map[$variableName];
         }
 
-        throw new Exception_Memory_VaribleNotFound('Variable "' . $variableName . '" not found!');
+        throw new Exception_Memory_VariableNotFound('Variable "' . $variableName . '" not found!');
     }
 }

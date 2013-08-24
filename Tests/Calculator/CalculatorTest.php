@@ -67,6 +67,13 @@ class CalculatorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($this->Calculator->calculate('3/4'), 0.75);
 	}
 
+	/**
+	 * @expectedException Exception_Memory_VariableNotFound
+	 */
+	public function testCalculatorVariableNotFound(){
+		$this->assertEquals($this->Calculator->calculate('2+x'), 0);
+	}
+
 	public function testSimpleSyntax()
 	{
 		$this->assertEquals($this->Calculator->calculate('(1+7)*(4*5)'), 160);

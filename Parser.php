@@ -66,7 +66,7 @@ class Parser
 		while (in_array($char, ['+', '-'])) {
 			$this->incrementPosition();
 			$Expression = new Expression_BinaryOperator($char, $Expression, $this->parseMult());
-//			$char = $this->lookAhead();
+			$char = $this->lookAhead();
 		}
 
 		return $Expression;
@@ -83,7 +83,7 @@ class Parser
 		while (in_array($char, ['*', '/', '%'])) {
 			$this->incrementPosition();
 			$Expression = new Expression_BinaryOperator($char, $Expression, $this->parseTerm());
-//			$char = $this->lookAhead();
+			$char = $this->lookAhead();
 		}
 		return $Expression;
 	}
