@@ -1,9 +1,6 @@
 <?php
 
-class Expression
+abstract class Expression
 {
-    public function evalExpression(Memory $Memory)
-    {
-
-    }
+	abstract public function evalExpression(Memory $Memory);
 }
