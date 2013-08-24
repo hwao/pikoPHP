@@ -35,6 +35,11 @@ class Parser
 		$this->position++;
 	}
 
+	private function isAlnum($char)
+	{
+		return (bool)preg_match('@^[a-z]$@i', $char);
+	}
+
 	/**
 	 * @return Expression
 	 */
@@ -53,7 +58,7 @@ class Parser
 	/**
 	 * @return Expression
 	 */
-	private function parseSum()
+	protected function parseSum()
 	{
 		$Expression = $this->parseMult();
 		$char = $this->lookAhead();
@@ -61,14 +66,13 @@ class Parser
 		while (in_array($char, ['+', '-'])) {
 			$this->incrementPosition();
 			$Expression = new Expression_BinaryOperator($char, $Expression, $this->parseMult());
-			$char = $this->lookAhead();
+//			$char = $this->lookAhead();
 		}
 
 		return $Expression;
 	}
 
 	/**
-	 * Parsuje składnik.
 	 * @return Expression
 	 */
 	protected function parseMult()
@@ -76,17 +80,15 @@ class Parser
 		$Expression = $this->parseTerm();
 		$char = $this->lookAhead();
 
-		while ($char == '*' || $char == '/' || $char == '%') {
-			$this->position++;
+		while (in_array($char, ['*', '/', '%'])) {
+			$this->incrementPosition();
 			$Expression = new Expression_BinaryOperator($char, $Expression, $this->parseTerm());
-			$char = $this->lookAhead();
+//			$char = $this->lookAhead();
 		}
-
 		return $Expression;
 	}
 
 	/**
-	 * Parsuje czynnik.
 	 * @return Expression
 	 */
 	protected function parseTerm()
@@ -95,60 +97,51 @@ class Parser
 		if (is_numeric($char))
 			return $this->parseConstant();
 		else if ($this->isAlnum($char))
-			return $this->parseVarible();
+			return $this->parseVariable();
 		else if ($char == '(')
-			return $this->parseParen();
-		else
-			throw new Exception_Parser_NotParsed($this->input);
+			return $this->parseParent();
+
+		throw new Exception_Parser_NotParsed($this->input);
 	}
 
 	/**
-	 * Parsuje liczbę.
 	 * @return Expression
 	 */
-	public function parseConstant()
+	protected function parseConstant()
 	{
-		$n = 0;
+		$int = 0;
 		while (is_numeric($this->activeChar())) {
-			$n *= 10;
-			$n += $this->activeChar() - '0';
-			$this->position++;
+			$int *= 10;
+			$int += $this->activeChar();
+			$this->incrementPosition();
 		}
-		return new Expression_Constant($n);
+		return new Expression_Constant($int);
 	}
 
 	/**
-	 * Parsuje nazwę zmiennej.
 	 * @return Expression
 	 */
-	protected function parseVarible()
+	protected function parseVariable()
 	{
-		$s = '';
+		$variable = '';
 		while ($this->isAlnum($this->activeChar())) {
-			$s .= $this->activeChar();
-			$this->position++;
+			$variable .= $this->activeChar();
+			$this->incrementPosition();
 		}
-		return new Expression_Variable($s);
-	}
-
-	private function isAlnum($char)
-	{
-		return (bool)preg_match('@^[a-z]$@i', $char);
+		return new Expression_Variable($variable);
 	}
 
 	/**
-	 * Parsuje "sumę" w nawiasie.
 	 * @return Expression
 	 */
-	protected function parseParen()
+	protected function parseParent()
 	{
-		$this->position++; // parse_term zapewnia, że wskaźnik
-		// stoi na nawiasie otwierającym '('
+		$this->incrementPosition(); // parse_term zapewnia, że 'wskaźnik' jest na nawiasie otwierającym '(', chcemy być dalej
 		$Expression = $this->parseSum();
 		if ($this->lookAhead() == ')') {
-			$this->position++;
+			$this->incrementPosition();
 			return $Expression;
-		} else
-			throw new Exception_Parser_NotParsed($this->input);
+		}
+		throw new Exception_Parser_NotParsed($this->input);
 	}
 }
