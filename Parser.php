@@ -13,31 +13,41 @@ class Parser
 
 	private function skipWhitespace()
 	{
+		while (true) {
+			$char = $this->activeChar();
+			if ($char === null) {
+				break;
+			}
+			if (trim($char) != '') {
+				break;
+			}
+			$this->incrementPosition();
+		}
 		return true;
 	}
 
-	private function lookAhead()
+	protected function lookAhead()
 	{
 		$this->skipWhitespace();
 		return $this->activeChar();
 	}
 
-	private function activeChar()
+	protected function incrementPosition()
+	{
+		$this->position++;
+	}
+
+	protected function isAlnum($char)
+	{
+		return (bool)preg_match('@^[a-z]$@i', $char);
+	}
+
+	protected function activeChar()
 	{
 		if (isSet($this->input[$this->position])) {
 			return $this->input[$this->position];
 		}
 		return null;
-	}
-
-	private function incrementPosition()
-	{
-		$this->position++;
-	}
-
-	private function isAlnum($char)
-	{
-		return (bool)preg_match('@^[a-z]$@i', $char);
 	}
 
 	/**
@@ -75,7 +85,7 @@ class Parser
 	/**
 	 * @return Expression
 	 */
-	protected function parseMult()
+	private function parseMult()
 	{
 		$Expression = $this->parseTerm();
 		$char = $this->lookAhead();
@@ -91,7 +101,7 @@ class Parser
 	/**
 	 * @return Expression
 	 */
-	protected function parseTerm()
+	private function parseTerm()
 	{
 		$char = $this->lookAhead();
 		if (is_numeric($char))
@@ -107,7 +117,7 @@ class Parser
 	/**
 	 * @return Expression
 	 */
-	protected function parseConstant()
+	private function parseConstant()
 	{
 		$int = 0;
 		while (is_numeric($this->activeChar())) {
@@ -121,7 +131,7 @@ class Parser
 	/**
 	 * @return Expression
 	 */
-	protected function parseVariable()
+	private function parseVariable()
 	{
 		$variable = '';
 		while ($this->isAlnum($this->activeChar())) {
@@ -134,7 +144,7 @@ class Parser
 	/**
 	 * @return Expression
 	 */
-	protected function parseParent()
+	private function parseParent()
 	{
 		$this->incrementPosition(); // parse_term zapewnia, że 'wskaźnik' jest na nawiasie otwierającym '(', chcemy być dalej
 		$Expression = $this->parseSum();

@@ -70,7 +70,8 @@ class CalculatorTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @expectedException Exception_Memory_VariableNotFound
 	 */
-	public function testCalculatorVariableNotFound(){
+	public function testCalculatorVariableNotFound()
+	{
 		$this->assertEquals($this->Calculator->calculate('2+x'), 0);
 	}
 
@@ -81,6 +82,15 @@ class CalculatorTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($this->Calculator->calculate('x+(1+7)*(4*5)', ['x' => 5]), 165);
 		$this->assertEquals($this->Calculator->calculate('x+(1+7)*(4*5)', ['x' => -5]), 155);
+	}
+
+	public function testRemoveWhitespace()
+	{
+		$this->assertEquals($this->Calculator->calculate(' ( 1 + 7 ) * ( 4 * 5 ) '), 160);
+		$this->assertEquals($this->Calculator->calculate(' 1 '), 1);
+		$this->assertEquals($this->Calculator->calculate(' ( 0 - 1 ) '), -1);
+		$this->assertEquals($this->Calculator->calculate(' ( 0 - 1 ) * 2 '), -2);
+		$this->assertEquals($this->Calculator->calculate(' 1 / 2 '), 0.5);
 	}
 }
  
